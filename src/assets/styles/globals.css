@@ -1,0 +1,105 @@
+@import "tailwindcss";
+
+/*
+ * Tailwind v4 defaults to media-query based dark mode. This app toggles a
+ * `.dark` / `.light` class on <html> instead (see useTheme.ts), so we need
+ * to explicitly opt into class-based dark mode or every `dark:` utility in
+ * the app is silently ignored.
+ */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  /* Signal — the single measured accent, used only for active/primary state.
+     A calibrated ink-teal, not the default indigo/violet SaaS gradient. */
+  --color-signal-50: #eefaf7;
+  --color-signal-100: #d3f1e9;
+  --color-signal-300: #7fd3c1;
+  --color-signal-400: #4bb9a4;
+  --color-signal-500: #23988a;
+  --color-signal-600: #187a71;
+  --color-signal-700: #145f5b;
+  --color-signal-900: #0f3733;
+
+  /* Ink — a cool graphite neutral for dark surfaces (not pure black) */
+  --color-ink-50: #f6f6f5;
+  --color-ink-100: #eceeed;
+  --color-ink-200: #d9dcda;
+  --color-ink-300: #b2b8b5;
+  --color-ink-400: #838b88;
+  --color-ink-500: #5b6360;
+  --color-ink-600: #454c49;
+  --color-ink-700: #33393a;
+  --color-ink-800: #23282a;
+  --color-ink-850: #1a1f21;
+  --color-ink-900: #14181a;
+  --color-ink-950: #0d1011;
+
+  /* Paper — warm-neutral light surface, cooler than the default cream default */
+  --color-paper-50: #f8f7f4;
+  --color-paper-100: #f1efe9;
+  --color-paper-200: #e6e3da;
+
+  --font-mono: 'SFMono-Regular', ui-monospace, 'JetBrains Mono', Menlo, Consolas, monospace;
+
+  --animate-fade-in: fadeIn 0.15s ease-out forwards;
+  --animate-slide-up: slideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(6px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #d9d6cd;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #b8b4a8;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #2a3032;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #3c4345;
+}
+
+/* Quiet elevated surface — a restrained substitute for glassmorphism */
+.surface {
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(20, 24, 26, 0.06);
+}
+
+.dark .surface {
+  background: rgba(13, 16, 17, 0.78);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Signal pulse — used sparingly on the single live indicator, never on decor */
+@keyframes signalPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
+}
+
+.signal-dot {
+  animation: signalPulse 2s ease-in-out infinite;
+}

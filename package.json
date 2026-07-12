@@ -1,0 +1,55 @@
+{
+  "name": "refreshflow",
+  "version": "1.0.0",
+  "description": "Chrome extension for auto-refresh, page monitoring, and page automation.",
+  "type": "module",
+  "packageManager": "pnpm@11.9.0",
+  "scripts": {
+    "dev": "vite",
+    "build": "node scripts/build.js",
+    "icons": "node scripts/generate-icons.js",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "lint": "eslint .",
+    "format": "prettier --write \"src/**/*.{ts,tsx,css,html}\"",
+    "zip": "node scripts/zip-release.js"
+  },
+  "keywords": [
+    "chrome-extension",
+    "auto-refresh",
+    "page-monitor",
+    "automation"
+  ],
+  "author": "RefreshFlow Contributors",
+  "license": "MIT",
+  "dependencies": {
+    "idb": "^8.0.1",
+    "lucide-react": "^0.475.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.20.0",
+    "@tailwindcss/vite": "^4.0.0",
+    "@types/chrome": "^0.0.306",
+    "@types/node": "^22.13.4",
+    "@types/react": "^19.0.8",
+    "@types/react-dom": "^19.0.3",
+    "@typescript-eslint/eslint-plugin": "^8.24.0",
+    "@typescript-eslint/parser": "^8.24.0",
+    "@vitejs/plugin-react": "^4.3.4",
+    "eslint": "^9.20.1",
+    "eslint-plugin-react": "^7.37.4",
+    "eslint-plugin-react-hooks": "^5.1.0",
+    "esbuild": "^0.24.2",
+    "jsdom": "^26.0.0",
+    "archiver": "^7.0.1",
+    "sharp": "^0.33.5",
+    "prettier": "^3.5.1",
+    "tailwindcss": "^4.0.0",
+    "typescript": "^5.7.3",
+    "vite": "^6.1.0",
+    "vitest": "^3.0.5"
+  }
+}

@@ -1,0 +1,27 @@
+# pnpm 11+ reads non-auth settings from here (not .npmrc).
+# See: https://pnpm.io/settings
+
+# Require packages to be at least 1 day old before pnpm will install them.
+# This is pnpm 11's default supply-chain protection against just-published
+# malicious package versions - kept here explicitly so the value is visible
+# and version-controlled rather than relying on whatever pnpm's default is.
+minimumReleaseAge: 1440
+
+# electron-to-chromium, caniuse-lite, and update-browserslist-db are pure
+# build-time data packages (they feed Tailwind/PostCSS's browserslist
+# resolution) maintained as part of the Browserslist project. They publish
+# many times a day and are never shipped in the built extension, so the
+# release-age gate does nothing but cause spurious install failures for
+# them - excluded here, everything else still enforces the 1-day wait.
+minimumReleaseAgeExclude:
+  - electron-to-chromium
+  - caniuse-lite
+  - update-browserslist-db
+
+# esbuild and sharp both ship native binaries fetched/verified via a
+# postinstall script. pnpm 11 blocks all dependency build scripts by
+# default (ERR_PNPM_IGNORED_BUILDS) until explicitly approved - approved
+# here so `pnpm install` works non-interactively on a fresh clone/CI run.
+allowBuilds:
+  esbuild: true
+  sharp: true
