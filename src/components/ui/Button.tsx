@@ -16,19 +16,19 @@ export function Button({
   ...props
 }: ButtonProps) {
   const baseStyle =
-    'inline-flex items-center justify-center font-semibold rounded-md transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-signal-500/40 focus-visible:ring-offset-1 focus-visible:ring-offset-paper-50 dark:focus-visible:ring-offset-ink-950 active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none disabled:active:scale-100 cursor-pointer';
+    'inline-flex items-center justify-center font-display font-semibold rounded-lg transition-all duration-200 cubic-bezier(0.16, 1, 0.3, 1) focus:outline-none focus-visible:ring-2 focus-visible:ring-signal-500/40 focus-visible:ring-offset-1 focus-visible:ring-offset-paper-50 dark:focus-visible:ring-offset-ink-950 hover:scale-[1.02] active:scale-[0.97] disabled:opacity-50 disabled:pointer-events-none disabled:active:scale-100 cursor-pointer';
 
   const variants = {
     primary:
-      'bg-ink-900 hover:bg-ink-800 text-paper-50 shadow-sm border border-ink-900 dark:bg-signal-600 dark:hover:bg-signal-500 dark:border-signal-600 dark:text-white',
+      'bg-gradient-to-r from-signal-600 to-signal-500 hover:from-signal-500 hover:to-signal-600 text-white shadow-[0_2px_8px_rgba(13,148,136,0.15)] border border-signal-600/30 hover:shadow-[0_4px_12px_rgba(13,148,136,0.25)] dark:from-signal-600 dark:to-signal-700 dark:hover:from-signal-500 dark:hover:to-signal-600 dark:border-signal-500/30',
     secondary:
-      'bg-paper-100 hover:bg-paper-200 text-ink-900 border border-ink-200/70 dark:bg-ink-850 dark:hover:bg-ink-800 dark:text-ink-100 dark:border-ink-700',
+      'bg-paper-100 hover:bg-paper-200 text-ink-800 border border-ink-200/60 dark:bg-ink-850 dark:hover:bg-ink-800 dark:text-ink-100 dark:border-ink-800/80',
     outline:
-      'bg-transparent hover:bg-paper-100 text-ink-700 border border-ink-200 hover:border-ink-300 dark:hover:bg-ink-850 dark:text-ink-300 dark:border-ink-700 dark:hover:text-ink-50',
+      'bg-transparent hover:bg-paper-100/80 text-ink-700 border border-ink-200 hover:border-ink-300 dark:hover:bg-ink-850 dark:text-ink-300 dark:border-ink-800 dark:hover:text-ink-100',
     ghost:
-      'bg-transparent hover:bg-paper-100 text-ink-500 hover:text-ink-900 dark:hover:bg-ink-850 dark:text-ink-400 dark:hover:text-ink-100',
+      'bg-transparent hover:bg-paper-100/50 text-ink-500 hover:text-ink-800 dark:hover:bg-ink-850/50 dark:text-ink-400 dark:hover:text-ink-200',
     danger:
-      'bg-transparent hover:bg-rose-50 text-rose-700 hover:text-rose-800 dark:text-rose-400 dark:hover:bg-rose-500/10 border border-rose-200 dark:border-rose-500/25',
+      'bg-transparent hover:bg-rose-500/5 text-rose-600 hover:text-rose-700 dark:text-rose-400 dark:hover:bg-rose-500/10 border border-rose-200 dark:border-rose-500/20',
   };
 
   const sizes = {

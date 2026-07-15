@@ -56,9 +56,25 @@ chrome.alarms.onAlarm.addListener((alarm) => {
 
 // Keep the badge countdown in sync with any job state change, no matter
 // which context (popup, dashboard, command shortcut) caused it.
-Storage.onChanged((changes) => {
+Storage.onChanged(async (changes) => {
   if (changes.jobs) {
     BadgeManager.update();
+  }
+
+  if (changes.settings) {
+    const oldSettings = changes.settings.oldValue;
+    const newSettings = changes.settings.newValue;
+    
+    // If visual timer overlay is toggled on, synchronize all active jobs immediately
+    if (newSettings && (!oldSettings || !oldSettings.showVisualTimerOverlay) && newSettings.showVisualTimerOverlay) {
+      const jobs = await Storage.getJobs();
+      for (const job of Object.values(jobs)) {
+        if (job.state.status === 'running' || job.state.status === 'paused') {
+          const tabIds = await TabScopeResolver.resolveTabs(job).catch(() => []);
+          await OverlayBroker.syncForJob(job, tabIds);
+        }
+      }
+    }
   }
 });
 
@@ -143,8 +159,23 @@ chrome.commands.onCommand.addListener(async (command, tab) => {
   }
 });
 
+// Fired when tab completes loading, update overlay immediately to keep it synchronized
+chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
+  if (changeInfo.status === 'complete' && tab.url) {
+    const jobs = await Storage.getJobs();
+    for (const job of Object.values(jobs)) {
+      if (job.state.status === 'running' || job.state.status === 'paused') {
+        const tabIds = await TabScopeResolver.resolveTabs(job).catch(() => []);
+        if (tabIds.includes(tabId)) {
+          await OverlayBroker.showOnTab(tabId, job);
+        }
+      }
+    }
+  }
+});
+
 // Fired when message is dispatched across contexts
-Messaging.onMessage((type, payload, _sender, sendResponse) => {
+Messaging.onMessage((type, payload, sender, sendResponse) => {
   // Return true if async response is needed
   let isAsync = false;
 
@@ -199,7 +230,7 @@ Messaging.onMessage((type, payload, _sender, sendResponse) => {
           Storage.saveJob(job).then(() => {
             AlarmScheduler.cancel(jobId).then(async () => {
               const tabIds = await TabScopeResolver.resolveTabs(job).catch(() => []);
-              for (const tabId of tabIds) await OverlayBroker.hideOnTab(tabId, jobId);
+              await OverlayBroker.syncForJob(job, tabIds);
               sendResponse({ status: 'paused' });
             });
           });
@@ -228,6 +259,43 @@ Messaging.onMessage((type, payload, _sender, sendResponse) => {
         sendResponse({ status: 'executed' });
       });
       isAsync = true;
+      break;
+    }
+
+    case 'USER_INTERACTION_DETECTED': {
+      const tabId = sender.tab?.id;
+      if (!tabId) break;
+
+      Storage.getSettings().then(async (settings) => {
+        if (!settings.userInteractionBehaviorEnabled) return;
+
+        const behavior = settings.userInteractionBehavior || 'pause';
+        const jobs = await Storage.getJobs();
+
+        for (const job of Object.values(jobs)) {
+          const tabIds = await TabScopeResolver.resolveTabs(job).catch(() => []);
+          if (tabIds.includes(tabId)) {
+            if (behavior === 'stop' && job.state.status === 'running') {
+              job.state.status = 'stopped';
+              await Storage.saveJob(job);
+              await AlarmScheduler.cancel(job.id);
+              await OverlayBroker.hideOnTab(tabId, job.id);
+            } else if (behavior === 'pause' && job.state.status === 'running') {
+              job.state.status = 'paused';
+              await Storage.saveJob(job);
+              await AlarmScheduler.cancel(job.id);
+              await OverlayBroker.syncForJob(job, [tabId]);
+            } else if (behavior === 'restart') {
+              if (job.state.status === 'running' || job.state.status === 'paused') {
+                job.state.status = 'running';
+                await Storage.saveJob(job);
+                await AlarmScheduler.schedule(job);
+                await OverlayBroker.syncForJob(job, [tabId]);
+              }
+            }
+          }
+        }
+      });
       break;
     }
 

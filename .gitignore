@@ -44,9 +44,10 @@ yarn-error.log*
 Thumbs.db
 
 # ---- Package manager ----
-# This project uses pnpm - keep pnpm-lock.yaml committed.
-# Ignore lockfiles from other package managers in case they get created by mistake.
+# This project uses pnpm
 package-lock.json
 yarn.lock
+pnpm-lock.yaml
+pnpm-workspace.yaml
 .npm/
 .pnpm-store/

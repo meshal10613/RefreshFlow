@@ -33,13 +33,13 @@ export function Modal({ isOpen, onClose, title, children, footer }: ModalProps) 
       />
 
       {/* Modal Dialog */}
-      <div className="relative bg-white border border-ink-200 dark:bg-ink-900 dark:border-ink-800 rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl flex flex-col max-h-[85vh] animate-slide-up z-10">
+      <div className="relative bg-white border border-ink-200/60 dark:bg-ink-900 dark:border-ink-800/80 rounded-2xl w-full max-w-lg overflow-hidden shadow-[0_20px_50px_-12px_rgba(15,23,42,0.15)] flex flex-col max-h-[85vh] animate-slide-up z-10 font-sans">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4.5 border-b border-ink-200 bg-white dark:border-ink-800/80 dark:bg-ink-900">
-          <h3 className="text-base font-semibold text-ink-900 dark:text-ink-100 tracking-tight">{title}</h3>
+        <div className="flex items-center justify-between px-6 py-4 border-b border-ink-200/60 bg-white dark:border-ink-800/80 dark:bg-ink-900">
+          <h3 className="text-base font-display font-bold text-ink-950 dark:text-ink-50 tracking-tight">{title}</h3>
           <button
             onClick={onClose}
-            className="text-ink-500 hover:text-ink-900 hover:bg-ink-100 rounded-lg p-1.5 dark:text-ink-400 dark:hover:text-ink-100 dark:hover:bg-ink-800 transition-colors cursor-pointer"
+            className="text-ink-400 hover:text-ink-800 hover:bg-paper-100 rounded-lg p-1.5 dark:text-ink-500 dark:hover:text-ink-200 dark:hover:bg-ink-800 transition-all duration-200 cursor-pointer"
           >
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -54,7 +54,7 @@ export function Modal({ isOpen, onClose, title, children, footer }: ModalProps) 
 
         {/* Footer */}
         {footer && (
-          <div className="px-6 py-4 border-t border-ink-200 bg-ink-50/60 dark:border-ink-800/80 dark:bg-ink-900/60 flex items-center justify-end gap-3">
+          <div className="px-6 py-4 border-t border-ink-200/60 bg-paper-50/50 dark:border-ink-800/60 dark:bg-ink-900/40 flex items-center justify-end gap-3">
             {footer}
           </div>
         )}

@@ -15,17 +15,17 @@ interface TabsProps {
 
 export function Tabs({ tabs, activeTab, onChange, className = '' }: TabsProps) {
   return (
-    <div className={`flex border border-ink-200/70 bg-paper-100 dark:border-ink-800 dark:bg-ink-950/50 p-1 rounded-lg ${className}`}>
+    <div className={`flex border border-ink-200/60 bg-paper-100 dark:border-ink-800/80 dark:bg-ink-900/40 p-1.25 rounded-xl ${className}`}>
       {tabs.map((tab) => {
         const isActive = tab.id === activeTab;
         return (
           <button
             key={tab.id}
             onClick={() => onChange(tab.id)}
-            className={`flex-1 flex items-center justify-center gap-2 py-2 px-3 text-xs font-semibold rounded-md transition-colors duration-150 cursor-pointer ${
+            className={`flex-1 flex items-center justify-center gap-2 py-2 px-3.5 text-xs font-display font-semibold rounded-lg transition-all duration-200 cursor-pointer ${
               isActive
-                ? 'bg-white text-ink-900 shadow-sm border border-ink-200/70 dark:bg-ink-800 dark:text-ink-50 dark:border-ink-700'
-                : 'text-ink-500 hover:text-ink-800 hover:bg-white/60 dark:hover:text-ink-300 dark:hover:bg-ink-900/40'
+                ? 'bg-white text-ink-950 shadow-[0_2px_8px_-1px_rgba(15,23,42,0.06)] border border-ink-200/40 dark:bg-ink-800 dark:text-ink-50 dark:border-ink-700/50'
+                : 'text-ink-500 hover:text-ink-800 hover:bg-white/40 dark:text-ink-400 dark:hover:text-ink-200 dark:hover:bg-ink-800/30'
             }`}
           >
             {tab.icon && <span className="shrink-0">{tab.icon}</span>}

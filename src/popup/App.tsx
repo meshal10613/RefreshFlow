@@ -73,17 +73,15 @@ export default function App() {
 
       <Header title="RefreshFlow" showDashboardLink runningCount={runningCount} />
 
-      <div className="relative flex-1 overflow-y-auto p-4 flex flex-col gap-4">
-        <Tabs tabs={FILTERS} activeTab={filter} onChange={setFilter} />
-
-        {/* Quick settings — one tap away instead of buried in the dashboard */}
-        <div className="rounded-lg border border-ink-200 dark:border-ink-800 bg-white/60 dark:bg-ink-900/40 overflow-hidden">
+      {/* Quick Settings Pinned at the top of the popup (outside of scroll container) */}
+      <div className="px-4 pt-3 pb-1 border-b border-ink-200/40 dark:border-ink-800/40 bg-paper-50/80 dark:bg-ink-950/80 backdrop-blur-md z-10 shrink-0">
+        <div className="rounded-xl border border-ink-200/60 dark:border-ink-800/80 bg-white/60 dark:bg-ink-900/40 overflow-hidden shadow-[0_1px_4px_rgba(15,23,42,0.02)]">
           <button
             onClick={() => setQuickSettingsOpen((v) => !v)}
-            className="w-full flex items-center justify-between px-3 py-2 cursor-pointer"
+            className="w-full flex items-center justify-between px-3.5 py-2.5 cursor-pointer font-sans"
           >
-            <span className="flex items-center gap-1.5 text-xs font-semibold text-ink-600 dark:text-ink-300">
-              <Zap className="w-3.5 h-3.5" />
+            <span className="flex items-center gap-1.5 text-xs font-display font-bold text-ink-700 dark:text-ink-300 uppercase tracking-wider">
+              <Zap className="w-3.5 h-3.5 text-signal-500" />
               Quick settings
             </span>
             <ChevronDown
@@ -91,7 +89,7 @@ export default function App() {
             />
           </button>
           {quickSettingsOpen && (
-            <div className="px-3 pb-3 flex flex-col gap-1 border-t border-ink-200/70 dark:border-ink-800 pt-2">
+            <div className="px-3.5 pb-3.5 flex flex-col gap-1.5 border-t border-ink-200/60 dark:border-ink-800/80 pt-3">
               <Toggle
                 checked={settings.bypassCacheOnReload}
                 onChange={(checked) => updateSettings({ bypassCacheOnReload: checked })}
@@ -100,13 +98,67 @@ export default function App() {
               />
               <Toggle
                 checked={settings.showVisualTimerOverlay}
-                onChange={(checked) => updateSettings({ showVisualTimerOverlay: checked })}
+                onChange={async (checked) => {
+                  updateSettings({ showVisualTimerOverlay: checked });
+                  if (checked && activeTab.url) {
+                    try {
+                      const urlObj = new URL(activeTab.url);
+                      if (urlObj.protocol === 'http:' || urlObj.protocol === 'https:') {
+                        const origin = `${urlObj.protocol}//${urlObj.hostname}/*`;
+                        if (typeof chrome !== 'undefined' && chrome.permissions) {
+                          chrome.permissions.request({ origins: [origin] });
+                        }
+                      }
+                    } catch (err) {
+                      console.error('[QuickSettings] Failed to request active tab host permission:', err);
+                    }
+                  }
+                }}
                 label="Visual Timer Overlay"
                 description="Show a countdown on the page itself"
               />
+              {settings.showVisualTimerOverlay && (
+                <div className="pl-6 pr-1.5 flex items-center justify-between gap-2 py-1 bg-ink-50/50 dark:bg-ink-950/20 rounded-lg">
+                  <span className="text-xs text-ink-600 dark:text-ink-400 font-medium">Overlay Position</span>
+                  <select
+                    value={settings.visualTimerPosition || 'bottom-right'}
+                    onChange={(e) => updateSettings({ visualTimerPosition: e.target.value as any })}
+                    className="text-xs font-sans bg-white dark:bg-ink-800 text-ink-800 dark:text-ink-200 border border-ink-200 dark:border-ink-700 rounded-md px-2 py-1 outline-none cursor-pointer hover:border-signal-500 dark:hover:border-signal-500 transition-colors"
+                  >
+                    <option value="top-left">Top Left</option>
+                    <option value="top-right">Top Right</option>
+                    <option value="bottom-left">Bottom Left</option>
+                    <option value="bottom-right">Bottom Right</option>
+                  </select>
+                </div>
+              )}
+              <Toggle
+                checked={settings.userInteractionBehaviorEnabled}
+                onChange={(checked) => updateSettings({ userInteractionBehaviorEnabled: checked })}
+                label="Interaction Behavior"
+                description="Trigger action on page interaction"
+              />
+              {settings.userInteractionBehaviorEnabled && (
+                <div className="pl-6 pr-1.5 flex items-center justify-between gap-2 py-1 bg-ink-50/50 dark:bg-ink-950/20 rounded-lg">
+                  <span className="text-xs text-ink-600 dark:text-ink-400 font-medium">On Interaction</span>
+                  <select
+                    value={settings.userInteractionBehavior || 'pause'}
+                    onChange={(e) => updateSettings({ userInteractionBehavior: e.target.value as any })}
+                    className="text-xs font-sans bg-white dark:bg-ink-800 text-ink-800 dark:text-ink-200 border border-ink-200 dark:border-ink-700 rounded-md px-2 py-1 outline-none cursor-pointer hover:border-signal-500 dark:hover:border-signal-500 transition-colors"
+                  >
+                    <option value="stop">Stop Refresh</option>
+                    <option value="pause">Pause Refresh</option>
+                    <option value="restart">Restart countdown</option>
+                  </select>
+                </div>
+              )}
             </div>
           )}
         </div>
+      </div>
+
+      <div className="relative flex-1 overflow-y-auto p-4 flex flex-col gap-4">
+        <Tabs tabs={FILTERS} activeTab={filter} onChange={setFilter} />
 
         {loading ? (
           <div className="flex flex-col items-center justify-center gap-2 py-16 text-ink-500">
@@ -134,7 +186,7 @@ export default function App() {
       <button
         onClick={openNewJobModal}
         title="New Job"
-        className={`absolute right-4 ${soonestJob ? 'bottom-[76px]' : 'bottom-4'} z-30 w-12 h-12 rounded-full bg-ink-900 dark:bg-signal-600 text-paper-50 shadow-md flex items-center justify-center transition-transform duration-200 hover:scale-105 active:scale-95 cursor-pointer`}
+        className={`absolute right-4 ${soonestJob ? 'bottom-[76px]' : 'bottom-4'} z-30 w-12 h-12 rounded-full bg-gradient-to-tr from-signal-600 to-signal-500 hover:from-signal-500 hover:to-signal-600 dark:from-signal-600 dark:to-signal-700 dark:hover:from-signal-500 dark:hover:to-signal-600 text-white shadow-[0_4px_16px_rgba(13,148,136,0.25)] flex items-center justify-center transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer`}
       >
         <Plus className="w-5 h-5" />
       </button>

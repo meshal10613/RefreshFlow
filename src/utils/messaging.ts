@@ -21,6 +21,7 @@ export type MessageType =
   | 'OVERLAY_SHOW'
   | 'OVERLAY_UPDATE'
   | 'OVERLAY_HIDE'
+  | 'USER_INTERACTION_DETECTED'
   | 'PING';
 
 export interface MessagePayloads {
@@ -44,6 +45,7 @@ export interface MessagePayloads {
   OVERLAY_SHOW: { jobId: string; jobName: string; nextRunAt: number; intervalMs: number };
   OVERLAY_UPDATE: { jobId: string; jobName: string; nextRunAt: number; intervalMs: number };
   OVERLAY_HIDE: { jobId?: string };
+  USER_INTERACTION_DETECTED: { url: string };
   PING: undefined;
 }
 

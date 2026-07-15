@@ -19,7 +19,7 @@ export const OverlayBroker = {
   async syncForJob(job: Job, tabIds: number[]): Promise<void> {
     const settings = await StateStore.getSettings();
     if (!settings.showVisualTimerOverlay) return;
-    if (job.state.status !== 'running') return;
+    if (job.state.status !== 'running' && job.state.status !== 'paused') return;
 
     for (const tabId of tabIds) {
       this.showOnTab(tabId, job).catch(() => {
@@ -50,7 +50,8 @@ export const OverlayBroker = {
           jobId: job.id,
           jobName: job.name,
           nextRunAt: job.state.nextRunAt,
-          intervalMs: job.schedule.intervalMs
+          intervalMs: job.schedule.intervalMs,
+          status: job.state.status
         }
       })
       .catch(() => {});

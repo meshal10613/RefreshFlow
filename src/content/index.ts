@@ -87,13 +87,14 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
 
     case 'OVERLAY_SHOW':
     case 'OVERLAY_UPDATE': {
-      const { jobId, jobName, nextRunAt, intervalMs } = payload as {
+      const { jobId, jobName, nextRunAt, intervalMs, status } = payload as {
         jobId: string;
         jobName: string;
         nextRunAt: number;
         intervalMs: number;
+        status?: 'running' | 'paused';
       };
-      Overlay.update({ jobId, jobName, nextRunAt, intervalMs });
+      Overlay.update({ jobId, jobName, nextRunAt, intervalMs, status });
       sendResponse({ status: 'ok' });
       break;
     }
@@ -116,10 +117,42 @@ if (typeof chrome !== 'undefined' && chrome.storage) {
   chrome.storage.onChanged.addListener((changes, areaName) => {
     if (areaName !== 'local' || !changes.settings) return;
     const newSettings = changes.settings.newValue;
-    if (newSettings && newSettings.showVisualTimerOverlay === false) {
-      Overlay.hide();
+    if (newSettings) {
+      if (newSettings.showVisualTimerOverlay === false) {
+        Overlay.hide();
+      } else {
+        Overlay.updateTheme(newSettings.theme || 'system');
+        if (newSettings.visualTimerPosition) {
+          Overlay.updatePosition(newSettings.visualTimerPosition);
+        }
+      }
     }
   });
 }
+
+// Cooldown to avoid spamming background messages
+let lastInteractionTime = 0;
+const INTERACTION_COOLDOWN_MS = 2000; // 2 seconds
+
+function handleUserInteraction(e: Event) {
+  // Ignore clicks/interactions inside the overlay shadow DOM
+  if (e.target && (e.target as HTMLElement).closest('#refreshflow-overlay-host')) {
+    return;
+  }
+
+  const now = Date.now();
+  if (now - lastInteractionTime < INTERACTION_COOLDOWN_MS) {
+    return;
+  }
+  lastInteractionTime = now;
+
+  // Notify background that user interaction occurred on this page
+  Messaging.sendToBackground('USER_INTERACTION_DETECTED', { url: window.location.href }).catch(() => {});
+}
+
+// Register event listeners
+document.addEventListener('mousedown', handleUserInteraction, { passive: true });
+document.addEventListener('keydown', handleUserInteraction, { passive: true });
+document.addEventListener('scroll', handleUserInteraction, { passive: true });
 
 export {};

@@ -33,19 +33,19 @@ export function Header({ title = 'RefreshFlow', showDashboardLink = false, runni
   };
 
   return (
-    <header className="relative sticky top-0 z-35 flex items-center justify-between px-5 py-3.5 border-b border-ink-200/70 bg-white/85 dark:border-ink-800 dark:bg-ink-950/85 backdrop-blur-md select-none">
+    <header className="relative sticky top-0 z-35 flex items-center justify-between px-5 py-3.5 border-b border-ink-200/60 bg-white/85 dark:border-ink-800/80 dark:bg-ink-950/85 backdrop-blur-md select-none font-sans">
       <div className="flex items-center gap-3">
-        <div className="relative w-8 h-8 rounded-md bg-ink-900 dark:bg-signal-600 flex items-center justify-center ring-1 ring-ink-900/10 dark:ring-signal-500/30">
-          <RefreshCw className={`w-4 h-4 text-paper-50 ${runningCount > 0 ? 'animate-spin' : ''}`} style={{ animationDuration: '2.5s' }} />
+        <div className="relative w-8 h-8 rounded-lg bg-gradient-to-tr from-signal-600 to-signal-500 dark:from-signal-600 dark:to-signal-500 flex items-center justify-center shadow-sm">
+          <RefreshCw className={`w-4 h-4 text-white ${runningCount > 0 ? 'animate-spin' : ''}`} style={{ animationDuration: '2.5s' }} />
           {runningCount > 0 && (
             <span className="absolute -top-1 -right-1 flex h-2.5 w-2.5">
-              <span className="signal-dot relative inline-flex rounded-full h-2.5 w-2.5 bg-signal-400 ring-2 ring-white dark:ring-ink-950" />
+              <span className="signal-dot relative inline-flex rounded-full h-2.5 w-2.5 bg-white border-2 border-signal-500" />
             </span>
           )}
         </div>
         <div className="flex flex-col leading-tight">
-          <h1 className="text-[15px] font-bold tracking-tight text-ink-900 dark:text-ink-50">{title}</h1>
-          <span className="text-[10px] font-semibold text-ink-500 uppercase tracking-wider">
+          <h1 className="text-base font-display font-bold tracking-tight text-ink-950 dark:text-ink-50">{title}</h1>
+          <span className="text-[10px] font-bold text-ink-400 dark:text-ink-500 uppercase tracking-widest">
             {runningCount > 0
               ? `${runningCount} job${runningCount === 1 ? '' : 's'} active`
               : 'Auto Refresh & Monitor'}
@@ -58,9 +58,9 @@ export function Header({ title = 'RefreshFlow', showDashboardLink = false, runni
           <button
             onClick={() => chrome.tabs.create({ url: chrome.runtime.getURL('src/dashboard/dashboard.html') })}
             title="Open Dashboard"
-            className="flex items-center gap-1.5 text-xs font-semibold bg-white border border-ink-200 hover:border-signal-500/40 hover:bg-signal-50 text-ink-700 hover:text-signal-700 dark:bg-ink-900 dark:border-ink-700 dark:hover:border-signal-500/40 dark:hover:bg-signal-500/10 dark:text-ink-300 dark:hover:text-signal-300 px-2.5 py-1.5 rounded-md transition-colors cursor-pointer"
+            className="flex items-center gap-1.5 text-xs font-semibold bg-white hover:bg-paper-100/50 border border-ink-200/80 hover:border-ink-300 text-ink-700 dark:bg-ink-900 dark:border-ink-800 dark:hover:bg-ink-800 dark:hover:border-ink-700 dark:text-ink-300 px-3 py-2 rounded-lg transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] shadow-[0_1px_2px_rgba(15,23,42,0.02)] cursor-pointer"
           >
-            <LayoutDashboard className="w-3.5 h-3.5" />
+            <LayoutDashboard className="w-3.5 h-3.5 text-ink-500 dark:text-ink-400" />
             <span className="hidden sm:inline">Dashboard</span>
           </button>
         )}
@@ -69,7 +69,7 @@ export function Header({ title = 'RefreshFlow', showDashboardLink = false, runni
         <button
           onClick={toggleTheme}
           title={`Theme: ${theme}`}
-          className="bg-white hover:bg-paper-100 border border-ink-200 text-ink-500 hover:text-ink-900 dark:bg-ink-900 dark:hover:bg-ink-800 dark:border-ink-700 dark:text-ink-400 dark:hover:text-ink-100 p-2 rounded-md transition-colors cursor-pointer"
+          className="bg-white hover:bg-paper-100/50 border border-ink-200/80 hover:border-ink-300 text-ink-500 hover:text-ink-800 dark:bg-ink-900 dark:border-ink-800 dark:hover:bg-ink-800 dark:hover:border-ink-700 dark:text-ink-400 dark:hover:text-ink-200 p-2 rounded-lg transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] shadow-[0_1px_2px_rgba(15,23,42,0.02)] cursor-pointer"
         >
           {getThemeIcon()}
         </button>

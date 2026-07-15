@@ -35,6 +35,25 @@ export function useJobs() {
   };
 
   const startJob = async (jobId: string) => {
+    const job = jobs[jobId];
+    if (job) {
+      try {
+        const urlObj = new URL(job.url);
+        const origin = `${urlObj.protocol}//${urlObj.hostname}/*`;
+        if (typeof chrome !== 'undefined' && chrome.permissions && (urlObj.protocol === 'http:' || urlObj.protocol === 'https:')) {
+          const hasPerm = await new Promise<boolean>((resolve) => {
+            chrome.permissions.contains({ origins: [origin] }, resolve);
+          });
+          if (!hasPerm) {
+            await new Promise<boolean>((resolve) => {
+              chrome.permissions.request({ origins: [origin] }, resolve);
+            });
+          }
+        }
+      } catch (err) {
+        console.error('[useJobs] Failed to check/request host permission:', err);
+      }
+    }
     await Messaging.sendToBackground('JOB_START', { jobId }).catch(() => {});
   };
 

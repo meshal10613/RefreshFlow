@@ -76,6 +76,9 @@ export interface Settings {
   defaultScope: Job['target']['scope'];
   bypassCacheOnReload: boolean;
   showVisualTimerOverlay: boolean; // overlay a live countdown on the page itself
+  visualTimerPosition?: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
+  userInteractionBehaviorEnabled?: boolean;
+  userInteractionBehavior?: 'stop' | 'pause' | 'restart';
   notificationSoundFile: string; // name or synthesized tone index
   autoBackupEnabled: boolean;
   autoBackupIntervalDays: number;
@@ -107,6 +110,9 @@ export const DEFAULT_SETTINGS: Settings = {
   defaultScope: 'currentTab',
   bypassCacheOnReload: false,
   showVisualTimerOverlay: false,
+  visualTimerPosition: 'bottom-right',
+  userInteractionBehaviorEnabled: false,
+  userInteractionBehavior: 'pause',
   notificationSoundFile: 'default-chime',
   autoBackupEnabled: false,
   autoBackupIntervalDays: 7,

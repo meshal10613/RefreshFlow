@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap');
 @import "tailwindcss";
 
 /*
@@ -9,40 +10,46 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
-  /* Signal — the single measured accent, used only for active/primary state.
-     A calibrated ink-teal, not the default indigo/violet SaaS gradient. */
-  --color-signal-50: #eefaf7;
-  --color-signal-100: #d3f1e9;
-  --color-signal-300: #7fd3c1;
-  --color-signal-400: #4bb9a4;
-  --color-signal-500: #23988a;
-  --color-signal-600: #187a71;
-  --color-signal-700: #145f5b;
-  --color-signal-900: #0f3733;
-
-  /* Ink — a cool graphite neutral for dark surfaces (not pure black) */
-  --color-ink-50: #f6f6f5;
-  --color-ink-100: #eceeed;
-  --color-ink-200: #d9dcda;
-  --color-ink-300: #b2b8b5;
-  --color-ink-400: #838b88;
-  --color-ink-500: #5b6360;
-  --color-ink-600: #454c49;
-  --color-ink-700: #33393a;
-  --color-ink-800: #23282a;
-  --color-ink-850: #1a1f21;
-  --color-ink-900: #14181a;
-  --color-ink-950: #0d1011;
-
-  /* Paper — warm-neutral light surface, cooler than the default cream default */
-  --color-paper-50: #f8f7f4;
-  --color-paper-100: #f1efe9;
-  --color-paper-200: #e6e3da;
-
+  /* Font Families */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-display: 'Outfit', 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   --font-mono: 'SFMono-Regular', ui-monospace, 'JetBrains Mono', Menlo, Consolas, monospace;
 
-  --animate-fade-in: fadeIn 0.15s ease-out forwards;
-  --animate-slide-up: slideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  /* Signal — Vibrant calibrated ink-teal for active/primary state */
+  --color-signal-50: #f0fdfa;
+  --color-signal-100: #ccfbf1;
+  --color-signal-200: #99f6e4;
+  --color-signal-300: #5de4c7;
+  --color-signal-400: #2dd4bf;
+  --color-signal-500: #0f766e; /* Brand Primary */
+  --color-signal-600: #0d9488;
+  --color-signal-700: #0f766e;
+  --color-signal-800: #115e59;
+  --color-signal-900: #134e4a;
+
+  /* Ink — a cool graphite neutral for dark surfaces */
+  --color-ink-50: #f8fafc;
+  --color-ink-100: #f1f5f9;
+  --color-ink-200: #e2e8f0;
+  --color-ink-300: #cbd5e1;
+  --color-ink-400: #94a3b8;
+  --color-ink-500: #64748b;
+  --color-ink-600: #475569;
+  --color-ink-700: #334155;
+  --color-ink-800: #1e293b;
+  --color-ink-850: #121c2c;
+  --color-ink-900: #0f172a;
+  --color-ink-950: #070a13;
+
+  /* Paper — warm-neutral light surface */
+  --color-paper-50: #fafaf9;
+  --color-paper-100: #f5f5f4;
+  --color-paper-200: #e7e5e4;
+
+  /* Animations */
+  --animate-fade-in: fadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  --animate-slide-up: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  --animate-pulse-glow: pulseGlow 2s ease-in-out infinite;
 }
 
 @keyframes fadeIn {
@@ -51,8 +58,13 @@
 }
 
 @keyframes slideUp {
-  from { transform: translateY(6px); opacity: 0; }
+  from { transform: translateY(8px); opacity: 0; }
   to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes pulseGlow {
+  0%, 100% { opacity: 0.6; filter: drop-shadow(0 0 2px var(--color-signal-400)); }
+  50% { opacity: 1; filter: drop-shadow(0 0 8px var(--color-signal-400)); }
 }
 
 /* Custom Scrollbar */
@@ -66,40 +78,68 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #d9d6cd;
+  background: #cbd5e1;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #b8b4a8;
+  background: #94a3b8;
 }
 
 .dark ::-webkit-scrollbar-thumb {
-  background: #2a3032;
+  background: #334155;
 }
 
 .dark ::-webkit-scrollbar-thumb:hover {
-  background: #3c4345;
+  background: #475569;
 }
 
-/* Quiet elevated surface — a restrained substitute for glassmorphism */
+/* Premium glassmorphism surface */
 .surface {
-  background: rgba(255, 255, 255, 0.72);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(20, 24, 26, 0.06);
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(15, 23, 42, 0.05);
 }
 
 .dark .surface {
-  background: rgba(13, 16, 17, 0.78);
+  background: rgba(15, 23, 42, 0.75);
   border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-/* Signal pulse — used sparingly on the single live indicator, never on decor */
+/* Glowing accent effects for running status */
+.glow-card {
+  box-shadow: 0 0 0 1px rgba(13, 148, 136, 0.1), 0 4px 20px -2px rgba(13, 148, 136, 0.05);
+}
+.dark .glow-card {
+  box-shadow: 0 0 0 1px rgba(45, 212, 191, 0.15), 0 4px 24px -2px rgba(45, 212, 191, 0.08);
+}
+
+/* Signal pulse */
 @keyframes signalPulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.45; }
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.92); }
 }
 
 .signal-dot {
   animation: signalPulse 2s ease-in-out infinite;
+}
+
+/* Custom digital monospace styling */
+.digital-mono {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.025em;
+}
+
+/* Form sections separator */
+.form-section {
+  border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+  padding-bottom: 1.25rem;
+}
+.dark .form-section {
+  border-bottom: 1px solid rgba(51, 65, 85, 0.5);
+}
+.form-section:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
 }

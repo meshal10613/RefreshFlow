@@ -129,10 +129,63 @@ export function SettingsPanel() {
           />
           <Toggle
             checked={settings.showVisualTimerOverlay}
-            onChange={(checked) => updateSettings({ showVisualTimerOverlay: checked })}
+            onChange={async (checked) => {
+              updateSettings({ showVisualTimerOverlay: checked });
+              if (checked) {
+                try {
+                  const jobs = await StateStore.getJobs();
+                  for (const job of Object.values(jobs)) {
+                    if (job.state.status === 'running' || job.state.status === 'paused') {
+                      const urlObj = new URL(job.url);
+                      if (urlObj.protocol === 'http:' || urlObj.protocol === 'https:') {
+                        const origin = `${urlObj.protocol}//${urlObj.hostname}/*`;
+                        if (typeof chrome !== 'undefined' && chrome.permissions) {
+                          await new Promise<boolean>((resolve) => {
+                            chrome.permissions.request({ origins: [origin] }, resolve);
+                          });
+                        }
+                      }
+                    }
+                  }
+                } catch (err) {
+                  console.error('[SettingsPanel] Failed to request host permissions:', err);
+                }
+              }
+            }}
             label="Show Visual Timer Overlay"
             description="Overlays a live countdown on the page itself while a job is running. Requires site access to be granted for that page."
           />
+          {settings.showVisualTimerOverlay && (
+            <Select
+              label="Overlay Position"
+              value={settings.visualTimerPosition || 'bottom-right'}
+              onChange={(e) => updateSettings({ visualTimerPosition: e.target.value as any })}
+              options={[
+                { value: 'top-left', label: 'Top Left' },
+                { value: 'top-right', label: 'Top Right' },
+                { value: 'bottom-left', label: 'Bottom Left' },
+                { value: 'bottom-right', label: 'Bottom Right' },
+              ]}
+            />
+          )}
+          <Toggle
+            checked={settings.userInteractionBehaviorEnabled}
+            onChange={(checked) => updateSettings({ userInteractionBehaviorEnabled: checked })}
+            label="Interaction Behavior"
+            description="Change timer refresh behavior when you interact with the webpage."
+          />
+          {settings.userInteractionBehaviorEnabled && (
+            <Select
+              label="On Interaction"
+              value={settings.userInteractionBehavior || 'pause'}
+              onChange={(e) => updateSettings({ userInteractionBehavior: e.target.value as any })}
+              options={[
+                { value: 'stop', label: 'Stop Refresh' },
+                { value: 'pause', label: 'Pause Refresh' },
+                { value: 'restart', label: 'Restart Countdown' },
+              ]}
+            />
+          )}
         </div>
       </Card>
 

@@ -301,108 +301,121 @@ export function JobFormModal({
         </>
       }
     >
-      <div className="flex flex-col gap-5">
-        <Tabs
-          tabs={[
-            { id: 'refresh', label: 'Auto Refresh' },
-            { id: 'monitor', label: 'Page Monitor' },
-          ]}
-          activeTab={type}
-          onChange={(id) => setType(id as Job['type'])}
-        />
+      <div className="flex flex-col gap-6 font-sans">
+        {/* Section 1: Task Identity */}
+        <div className="form-section flex flex-col gap-4">
+          <Tabs
+            tabs={[
+              { id: 'refresh', label: 'Auto Refresh' },
+              { id: 'monitor', label: 'Page Monitor' },
+            ]}
+            activeTab={type}
+            onChange={(id) => setType(id as Job['type'])}
+          />
 
-        <Input
-          label="Job Name"
-          placeholder="e.g. Refresh ticket queue"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-        />
+          <Input
+            label="Job Name"
+            placeholder="e.g. Refresh ticket queue"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
 
-        <Input
-          label="URL"
-          placeholder="https://example.com"
-          value={url}
-          onChange={(e) => setUrl(e.target.value)}
-        />
+          <Input
+            label="URL"
+            placeholder="https://example.com"
+            value={url}
+            onChange={(e) => setUrl(e.target.value)}
+          />
 
-        <Select
-          label="Apply To"
-          value={scope}
-          onChange={(e) => setScope(e.target.value as Job['target']['scope'])}
-          options={SCOPE_OPTIONS}
-        />
-        {scope === 'currentTab' && (
-          <p className="-mt-3 text-[11px] text-ink-500 dark:text-ink-500">
-            This job stays locked to the tab it was created from and keeps refreshing on
-            schedule even while you're browsing somewhere else.
-          </p>
-        )}
-
-        <Select
-          label="Schedule"
-          value={scheduleMode}
-          onChange={(e) => setScheduleMode(e.target.value as ScheduleMode)}
-          options={[
-            { value: 'fixed', label: 'Fixed interval' },
-            { value: 'random', label: 'Random interval range' },
-          ]}
-        />
-
-        {scheduleMode === 'fixed' ? (
-          <div className="grid grid-cols-2 gap-3">
-            <Input
-              label="Interval"
-              type="number"
-              min={1}
-              value={intervalValue}
-              onChange={(e) => setIntervalValue(Math.max(1, Number(e.target.value)))}
-            />
-            <Select
-              label="Unit"
-              value={intervalUnit}
-              onChange={(e) => setIntervalUnit(e.target.value as IntervalUnit)}
-              options={[
-                { value: 'seconds', label: 'Seconds' },
-                { value: 'minutes', label: 'Minutes' },
-                { value: 'hours', label: 'Hours' },
-              ]}
-            />
-          </div>
-        ) : (
           <div className="flex flex-col gap-2">
+            <Select
+              label="Apply To"
+              value={scope}
+              onChange={(e) => setScope(e.target.value as Job['target']['scope'])}
+              options={SCOPE_OPTIONS}
+            />
+            {scope === 'currentTab' && (
+              <p className="text-[11px] text-ink-500 dark:text-ink-400 leading-normal">
+                This job stays locked to the tab it was created from and keeps refreshing on
+                schedule even while you're browsing somewhere else.
+              </p>
+            )}
+          </div>
+        </div>
+
+        {/* Section 2: Timer Configuration */}
+        <div className="form-section flex flex-col gap-4">
+          <h4 className="text-[10px] font-bold text-ink-400 dark:text-ink-500 uppercase tracking-widest">Schedule & Interval</h4>
+          
+          <Select
+            label="Schedule Mode"
+            value={scheduleMode}
+            onChange={(e) => setScheduleMode(e.target.value as ScheduleMode)}
+            options={[
+              { value: 'fixed', label: 'Fixed interval' },
+              { value: 'random', label: 'Random interval range' },
+            ]}
+          />
+
+          {scheduleMode === 'fixed' ? (
             <div className="grid grid-cols-2 gap-3">
               <Input
-                label="From (sec)"
+                label="Interval"
                 type="number"
                 min={1}
-                value={randomMinSeconds}
-                onChange={(e) => setRandomMinSeconds(Math.max(1, Number(e.target.value)))}
+                value={intervalValue}
+                onChange={(e) => setIntervalValue(Math.max(1, Number(e.target.value)))}
               />
-              <Input
-                label="To (sec)"
-                type="number"
-                min={1}
-                value={randomMaxSeconds}
-                onChange={(e) => setRandomMaxSeconds(Math.max(1, Number(e.target.value)))}
+              <Select
+                label="Unit"
+                value={intervalUnit}
+                onChange={(e) => setIntervalUnit(e.target.value as IntervalUnit)}
+                options={[
+                  { value: 'seconds', label: 'Seconds' },
+                  { value: 'minutes', label: 'Minutes' },
+                  { value: 'hours', label: 'Hours' },
+                ]}
               />
             </div>
-            <p className="text-xs text-ink-500">
-              Each cycle waits a random number of seconds between these two values.
-            </p>
-          </div>
-        )}
+          ) : (
+            <div className="flex flex-col gap-3">
+              <div className="grid grid-cols-2 gap-3">
+                <Input
+                  label="From (sec)"
+                  type="number"
+                  min={1}
+                  value={randomMinSeconds}
+                  onChange={(e) => setRandomMinSeconds(Math.max(1, Number(e.target.value)))}
+                />
+                <Input
+                  label="To (sec)"
+                  type="number"
+                  min={1}
+                  value={randomMaxSeconds}
+                  onChange={(e) => setRandomMaxSeconds(Math.max(1, Number(e.target.value)))}
+                />
+              </div>
+              <p className="text-xs text-ink-500 leading-normal">
+                Each cycle waits a random number of seconds between these two values.
+              </p>
+            </div>
+          )}
 
-        {showSubMinuteToggle && (
-          <Toggle
-            checked={subMinuteOptIn}
-            onChange={setSubMinuteOptIn}
-            label="Allow sub-minute precision"
-            description="Without this, intervals under 60s are rounded up to 60s to save battery."
-          />
-        )}
+          {showSubMinuteToggle && (
+            <Toggle
+              checked={subMinuteOptIn}
+              onChange={setSubMinuteOptIn}
+              label="Allow sub-minute precision"
+              description="Without this, intervals under 60s are rounded up to 60s to save battery."
+            />
+          )}
+        </div>
 
+        {/* Section 3: Monitoring Filters */}
         {type === 'monitor' && (
-          <div className="flex flex-col gap-4 border-t border-ink-200 dark:border-ink-800/80 pt-4">
+          <div className="form-section flex flex-col gap-4">
+            <h4 className="text-[10px] font-bold text-ink-400 dark:text-ink-500 uppercase tracking-widest">Page Monitoring</h4>
+            
             <Select
               label="Watch For"
               value={monitorMode}
@@ -465,7 +478,9 @@ export function JobFormModal({
           </div>
         )}
 
-        <div className="flex flex-col gap-3 border-t border-ink-200 dark:border-ink-800/80 pt-4">
+        {/* Section 4: Trigger Rules */}
+        <div className="form-section flex flex-col gap-3">
+          <h4 className="text-[10px] font-bold text-ink-400 dark:text-ink-500 uppercase tracking-widest">Trigger Conditions</h4>
           <Toggle
             checked={stopOnError}
             onChange={setStopOnError}
@@ -480,23 +495,23 @@ export function JobFormModal({
           />
         </div>
 
-        <div className="flex flex-col gap-3 border-t border-ink-200 dark:border-ink-800/80 pt-4">
-          <span className="text-xs font-semibold text-ink-500 dark:text-ink-400 uppercase tracking-wider">
-            Notifications
-          </span>
+        {/* Section 5: Notifications & Startup */}
+        <div className="form-section flex flex-col gap-3">
+          <h4 className="text-[10px] font-bold text-ink-400 dark:text-ink-500 uppercase tracking-widest">Alerts & Start Settings</h4>
           <Toggle checked={notifyDesktop} onChange={setNotifyDesktop} label="Desktop notification" />
           <Toggle checked={notifySound} onChange={setNotifySound} label="Play sound" />
           <Toggle checked={notifyBadge} onChange={setNotifyBadge} label="Badge counter" />
+          <div className="pt-2 border-t border-ink-100 dark:border-ink-800/40 mt-1">
+            <Toggle
+              checked={startImmediately}
+              onChange={setStartImmediately}
+              label={isEdit ? 'Keep running' : 'Start immediately'}
+            />
+          </div>
         </div>
 
-        <Toggle
-          checked={startImmediately}
-          onChange={setStartImmediately}
-          label={isEdit ? 'Keep running' : 'Start immediately'}
-        />
-
         {error && (
-          <div className="text-xs text-red-600 dark:text-red-400 bg-red-500/5 border border-red-500/10 rounded-lg px-3 py-2">
+          <div className="text-xs text-rose-600 dark:text-rose-400 bg-rose-500/5 border border-rose-500/10 rounded-lg px-3.5 py-2 font-medium">
             {error}
           </div>
         )}
